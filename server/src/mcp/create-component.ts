@@ -38,7 +38,7 @@ export async function createComponent() {
     recreate: true,
     spec: new VmSpec({
       snapshot: new VmSpec({
-        discriminator: "a",
+        discriminator: "c",
         with: {
           node: new VmBun({
             deleteAfterSuccess: false,
@@ -73,13 +73,5 @@ export async function createComponent() {
     ],
   });
 
-  return {
-    domain,
-    content: [
-      {
-        type: "text" as const,
-        text: `Created component preview at https://${domain} (repo: ${repoId})`,
-      },
-    ],
-  };
+  return { domain };
 }
