@@ -1,0 +1,14 @@
+{
+  "name": "compsplorer-monorepo",
+  "private": true,
+  "workspaces": ["server", "preview"],
+  "scripts": {
+    "dev": "bun run dev:server & bun run dev:preview & wait",
+    "dev:server": "bun run --filter server dev",
+    "dev:preview": "bun run --filter preview dev",
+    "build": "bun run --filter preview build && bun run --filter server build",
+    "build:server": "bun run --filter server build",
+    "build:preview": "bun run --filter preview build",
+    "typecheck": "bun run --filter server typecheck"
+  }
+}

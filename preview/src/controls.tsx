@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 export type ControlType =
   | { type: "text" }
@@ -117,98 +117,111 @@ export function Controls({
   activeVariant?: string;
   onVariantChange?: (name: string) => void;
 }) {
+  const [minimized, setMinimized] = useState(false);
   return (
     <div className="rounded-lg border border-zinc-700 bg-zinc-900 overflow-hidden">
-      <div className="border-b border-zinc-700 bg-zinc-800 px-4 py-2">
+      <div className="border-b border-zinc-700 bg-zinc-800 px-4 py-2 flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           Controls
         </span>
+        <button
+          onClick={() => setMinimized(!minimized)}
+          className="text-zinc-400 hover:text-zinc-200 text-xs px-1.5 py-0.5 rounded transition-colors"
+        >
+          {minimized ? "+" : "\u2013"}
+        </button>
       </div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-zinc-700 text-left text-xs text-zinc-500">
-            <th className="px-4 py-2 font-medium">Name</th>
-            <th className="px-4 py-2 font-medium">Control</th>
-          </tr>
-        </thead>
-        <tbody>
-          {variantNames && onVariantChange && (
-            <tr className="border-b border-zinc-800">
-              <td className="px-4 py-2.5">
-                <code className="text-xs font-mono text-zinc-300 bg-transparent">
-                  variant
-                </code>
-                <p className="text-xs mt-0.5 text-zinc-500">
-                  Story variant
-                </p>
-              </td>
-              <td className="px-4 py-2.5">
-                <div className="flex gap-1 flex-wrap">
-                  {variantNames.map((name) => (
-                    <button
-                      key={name}
-                      onClick={() => onVariantChange(name)}
-                      className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${
-                        activeVariant === name
-                          ? "border-indigo-500 bg-indigo-950 text-indigo-400"
-                          : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600"
-                      }`}
-                    >
+      <div
+        className="grid transition-[grid-template-rows] duration-200 ease-in-out"
+        style={{ gridTemplateRows: minimized ? "0fr" : "1fr" }}
+      >
+        <div className="overflow-hidden min-h-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-700 text-left text-xs text-zinc-500">
+                <th className="px-4 py-2 font-medium">Name</th>
+                <th className="px-4 py-2 font-medium">Control</th>
+              </tr>
+            </thead>
+            <tbody>
+              {variantNames && onVariantChange && (
+                <tr className="border-b border-zinc-800">
+                  <td className="px-4 py-2.5">
+                    <code className="text-xs font-mono text-zinc-300 bg-transparent">
+                      variant
+                    </code>
+                    <p className="text-xs mt-0.5 text-zinc-500">
+                      Story variant
+                    </p>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex gap-1 flex-wrap">
+                      {variantNames.map((name) => (
+                        <button
+                          key={name}
+                          onClick={() => onVariantChange(name)}
+                          className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${
+                            activeVariant === name
+                              ? "border-indigo-500 bg-indigo-950 text-indigo-400"
+                              : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600"
+                          }`}
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              )}
+              {Object.entries(argDefs).map(([name, def]) => (
+                <tr
+                  key={name}
+                  className="border-b border-zinc-800 last:border-0"
+                >
+                  <td className="px-4 py-2.5">
+                    <code className="text-xs font-mono text-zinc-300 bg-transparent">
                       {name}
-                    </button>
-                  ))}
-                </div>
-              </td>
-            </tr>
-          )}
-          {Object.entries(argDefs).map(([name, def]) => (
-            <tr
-              key={name}
-              className="border-b border-zinc-800 last:border-0"
-            >
-              <td className="px-4 py-2.5">
-                <code className="text-xs font-mono text-zinc-300 bg-transparent">
-                  {name}
-                </code>
-                {def.description && (
-                  <p className="text-xs mt-0.5 text-zinc-500">
-                    {def.description}
-                  </p>
-                )}
-              </td>
-              <td className="px-4 py-2.5">
-                <ControlInput
-                  name={name}
-                  def={def}
-                  value={values[name]}
-                  onChange={(v) => onChange({ ...values, [name]: v })}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    </code>
+                    {def.description && (
+                      <p className="text-xs mt-0.5 text-zinc-500">
+                        {def.description}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <ControlInput
+                      name={name}
+                      def={def}
+                      value={values[name]}
+                      onChange={(v) => onChange({ ...values, [name]: v })}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
 
-export interface StoryDef {
+export interface ComponentDef {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: React.ComponentType<any>;
-  args: Record<string, unknown>;
-  argDefs: Record<string, ArgDef>;
+  variants: Record<string, Record<string, unknown>>;
+  args: Record<string, ArgDef>;
 }
 
 export function StoryPreview({
-  stories,
+  componentDef,
 }: {
-  stories: Record<string, StoryDef>;
+  componentDef: ComponentDef;
 }) {
-  const names = Object.keys(stories);
+  const names = Object.keys(componentDef.variants);
   const [active, setActive] = useState(names[0]);
-  const story = stories[active];
   const [argsMap, setArgsMap] = useState<Record<string, Record<string, unknown>>>(
-    () => Object.fromEntries(Object.entries(stories).map(([k, v]) => [k, v.args]))
+    () => Object.fromEntries(Object.entries(componentDef.variants).map(([k, v]) => [k, v]))
   );
 
   const args = argsMap[active];
@@ -219,13 +232,15 @@ export function StoryPreview({
     Object.entries(args).filter(([, v]) => typeof v !== "function")
   );
 
+  const Component = componentDef.component;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900 p-8 min-h-[120px]">
-        <story.component {...args} />
+        <Component {...args} />
       </div>
       <Controls
-        argDefs={story.argDefs}
+        argDefs={componentDef.args}
         values={displayArgs}
         onChange={(next) => setArgs({ ...args, ...next })}
         variantNames={names}

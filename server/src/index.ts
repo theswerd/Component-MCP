@@ -1,3 +1,8 @@
+if (!process.env.FREESTYLE_API_KEY) {
+  console.error("FREESTYLE_API_KEY is required. Set it in your environment or .env file.");
+  process.exit(1);
+}
+
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
