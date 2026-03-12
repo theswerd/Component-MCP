@@ -38,7 +38,6 @@ export async function createComponent() {
     recreate: true,
     spec: new VmSpec({
       snapshot: new VmSpec({
-        discriminator: "c",
         with: {
           node: new VmBun({
             deleteAfterSuccess: false,
@@ -50,6 +49,7 @@ export async function createComponent() {
             installCommand: "bun install",
             port: 5173,
             templateRepo: TEMPLATE_REPO,
+
             devCommand: "bun run dev:preview -- --host",
             devCommandPty: devPty,
             env: {

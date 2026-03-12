@@ -8,7 +8,7 @@ import { createComponent } from "./create-component.js";
 
 export function createMcpServer() {
   const server = new McpServer({
-    name: "compsplorer",
+    name: "Component MCP",
     version: "0.1.0",
   });
 
@@ -18,13 +18,13 @@ export function createMcpServer() {
     server,
     "show_components",
     {
-      title: "Component Explorer",
-      description: "Show the Compsplorer component preview UI",
+      title: " Component Explorer",
+      description: "Show the Composer component preview UI",
       inputSchema: {},
       _meta: { ui: { resourceUri: createdComponentResourceUri } },
     },
     async () => ({
-      content: [{ type: "text", text: "Compsplorer component preview" }],
+      content: [{ type: "text", text: "component preview" }],
     })
   );
 
