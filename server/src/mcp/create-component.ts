@@ -38,6 +38,7 @@ export async function createComponent() {
     recreate: true,
     spec: new VmSpec({
       snapshot: new VmSpec({
+        discriminator: "a",
         with: {
           node: new VmBun({
             deleteAfterSuccess: false,

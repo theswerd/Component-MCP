@@ -100,7 +100,7 @@ export function createMcpServer() {
       let meta: Record<string, unknown> | undefined;
 
       if (createdComponentDomain) {
-        const src = `https://${createdComponentDomain}`;
+        const src = `https://${createdComponentDomain}/mcp-app.html`;
         html = `<!doctype html>
 <html lang="en">
 <head><meta charset="UTF-8" /><style>*{margin:0;padding:0}html,body,iframe{width:100%;height:100%;border:none;}</style></head>
@@ -109,7 +109,7 @@ export function createMcpServer() {
         meta = {
           ui: {
             csp: {
-              frameDomains: [src],
+              frameDomains: [`https://${createdComponentDomain}`],
             },
           },
         };
